@@ -117,7 +117,7 @@ public class TaskService : ITaskService
             Description = dto.Description,
             Status = dto.Status,
             Priority = dto.Priority,
-            DueDate = dto.DueDate,
+            DueDate = ToUtc(dto.DueDate),  // ensure UTC — Npgsql 9 rejects Kind=Unspecified
             AssignedUserId = dto.AssignedUserId
             // Id and CreatedAt are set by the entity defaults — not from the DTO
         };
@@ -162,7 +162,7 @@ public class TaskService : ITaskService
         task.Description = dto.Description;          // null = "clear the description"
         if (dto.Status.HasValue)   task.Status   = dto.Status.Value;
         if (dto.Priority.HasValue) task.Priority = dto.Priority.Value;
-        task.DueDate        = dto.DueDate;           // null = "remove the due date"
+        task.DueDate        = ToUtc(dto.DueDate);     // null = "remove the due date"; non-null → UTC
         task.AssignedUserId = dto.AssignedUserId;    // null = "unassign the task"
 
         // Note: AsNoTracking was used in the repository read, so we need to re-attach
@@ -179,4 +179,13 @@ public class TaskService : ITaskService
     {
         return await _taskRepository.DeleteAsync(id);
     }
+
+    /// <summary>
+    /// Ensures a nullable DateTime is stored as UTC in PostgreSQL.
+    /// Npgsql 9.x rejects DateTime with Kind=Unspecified for timestamp-with-time-zone columns.
+    /// HTML date inputs send "YYYY-MM-DD" which deserializes as Kind=Unspecified unless the
+    /// client appends a timezone (e.g. "T00:00:00Z"). This helper is a backend safety net.
+    /// </summary>
+    private static DateTime? ToUtc(DateTime? dt) =>
+        dt.HasValue ? DateTime.SpecifyKind(dt.Value, DateTimeKind.Utc) : null;
 }

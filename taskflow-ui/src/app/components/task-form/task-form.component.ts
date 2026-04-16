@@ -158,7 +158,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       ...formValue,
       // Send null for empty assignedUserId (not empty string '')
       assignedUserId: formValue.assignedUserId || null,
-      dueDate: formValue.dueDate || null
+      // HTML date input returns "YYYY-MM-DD" with no timezone.
+      // Append T00:00:00Z so the .NET backend deserializes it as DateTime.Kind=Utc.
+      // Without the Z, System.Text.Json produces Kind=Unspecified, which Npgsql 9
+      // rejects for timestamp-with-time-zone columns.
+      dueDate: formValue.dueDate ? `${formValue.dueDate}T00:00:00Z` : null
     };
 
     const request$ = this.isEditMode
