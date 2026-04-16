@@ -17,11 +17,11 @@ npx ng build \
 # GitHub Pages serves the Angular app for any unknown URL, then Angular
 # Router reads the URL and renders the correct component client-side.
 echo "Copying index.html → 404.html for SPA deep-link support..."
-cp "dist/${REPO_NAME}/browser/index.html" "dist/${REPO_NAME}/browser/404.html"
+cp "dist/taskflow-ui/browser/index.html" "dist/taskflow-ui/browser/404.html"
 
 echo "Deploying to gh-pages branch..."
 npx angular-cli-ghpages \
-  --dir "dist/${REPO_NAME}/browser"
+  --dir "dist/taskflow-ui/browser"
 
 echo ""
 echo "Deployed! Live at: https://plasmacat420.github.io/${REPO_NAME}/"
