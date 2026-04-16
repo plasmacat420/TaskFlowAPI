@@ -31,6 +31,25 @@ using Npgsql;
 using TaskFlowAPI.Repositories;
 using TaskFlowAPI.Services;
 
+// Converts a PostgreSQL URI (postgresql://user:pass@host/db) to Npgsql key=value format.
+// Npgsql 9.x does not accept URI format in NpgsqlConnectionStringBuilder or
+// NpgsqlDataSourceBuilder — verified by local test. System.Uri parses it reliably.
+static string ParsePostgresUri(string input)
+{
+    if (!input.StartsWith("postgres://") && !input.StartsWith("postgresql://"))
+        return input;
+    var uri = new Uri(input);
+    var userInfo = uri.UserInfo.Split(':', 2);
+    return new NpgsqlConnectionStringBuilder
+    {
+        Host     = uri.Host,
+        Port     = uri.Port < 0 ? 5432 : uri.Port,
+        Database = uri.AbsolutePath.TrimStart('/'),
+        Username = Uri.UnescapeDataString(userInfo[0]),
+        Password = Uri.UnescapeDataString(userInfo[1])
+    }.ConnectionString;
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ── 1. CONTROLLERS & API DOCUMENTATION ───────────────────────────────────────
@@ -80,12 +99,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             "Set 'ConnectionStrings:DefaultConnection' in appsettings.Development.json for local dev, " +
             "or ensure the Render service has ConnectionStrings__DefaultConnection set.");
 
-    // UseNpgsql(string) expects key=value format, not postgresql:// URIs.
-    // NpgsqlDataSource.Create() accepts both formats and is the modern Npgsql entry point.
-    // Passing the data source to UseNpgsql lets EF Core use the already-parsed connection.
-    var dataSource = NpgsqlDataSource.Create(connectionString);
-    options.UseNpgsql(dataSource, npgsql =>
-        npgsql.EnableRetryOnFailure(maxRetryCount: 3));
+    // Neither NpgsqlDataSourceBuilder nor NpgsqlConnectionStringBuilder accept
+    // postgresql:// URI format directly — both throw "initialization string" errors.
+    // We parse the URI ourselves with System.Uri (verified locally) then hand
+    // the resulting key=value string to NpgsqlDataSourceBuilder.
+    var dataSource = new NpgsqlDataSourceBuilder(ParsePostgresUri(connectionString)).Build();
+    options.UseNpgsql(dataSource);
 });
 
 // ── 3. REPOSITORIES (Data Access Layer) ──────────────────────────────────────
