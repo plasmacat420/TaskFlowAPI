@@ -68,14 +68,29 @@ builder.Services.AddSwaggerGen(c =>
 // Render injects DATABASE_URL automatically for PostgreSQL services.
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? Environment.GetEnvironmentVariable("DATABASE_URL")
-        ?? throw new InvalidOperationException(
+    // GetConnectionString returns "" (empty string) when the key exists but is blank in appsettings.json.
+    // "" is not null, so ?? would never reach DATABASE_URL. Use IsNullOrEmpty to handle both cases.
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (string.IsNullOrEmpty(connectionString))
+        connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+    if (string.IsNullOrEmpty(connectionString))
+        throw new InvalidOperationException(
             "Database connection string not found. " +
             "Set 'ConnectionStrings:DefaultConnection' in appsettings.json " +
             "or the DATABASE_URL environment variable.");
 
-    options.UseNpgsql(connectionString);
+    // Render provides DATABASE_URL as a PostgreSQL URI: postgres://user:pass@host:port/db
+    // Npgsql parses URI format natively. We append sslmode=require for Render's managed PostgreSQL
+    // which enforces SSL. Trust Server Certificate allows Render's self-signed cert.
+    if (!connectionString.Contains("SSL Mode") && !connectionString.Contains("sslmode"))
+    {
+        var sep = connectionString.Contains('?') ? "&" : "?";
+        connectionString += $"{sep}sslmode=require&Trust Server Certificate=true";
+    }
+
+    options.UseNpgsql(connectionString, npgsql =>
+        // Retry up to 3 times on transient failures (e.g. DB container not ready yet on cold start)
+        npgsql.EnableRetryOnFailure(maxRetryCount: 3));
 });
 
 // ── 3. REPOSITORIES (Data Access Layer) ──────────────────────────────────────
