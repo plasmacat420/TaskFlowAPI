@@ -68,20 +68,20 @@ builder.Services.AddSwaggerGen(c =>
 // Render injects DATABASE_URL automatically for PostgreSQL services.
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    // GetConnectionString returns "" (empty string) when the key exists but is blank in appsettings.json.
-    // "" is not null, so ?? would never reach DATABASE_URL. Use IsNullOrEmpty to handle both cases.
+    // render.yaml sets env var "ConnectionStrings__DefaultConnection" (double underscore).
+    // ASP.NET Core's configuration system maps this directly to ConnectionStrings:DefaultConnection,
+    // so GetConnectionString() returns the full value injected by Render — no manual env var parsing.
+    // Locally, appsettings.Development.json provides the value.
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (string.IsNullOrEmpty(connectionString))
-        connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
     if (string.IsNullOrEmpty(connectionString))
         throw new InvalidOperationException(
             "Database connection string not found. " +
-            "Set 'ConnectionStrings:DefaultConnection' in appsettings.json " +
-            "or the DATABASE_URL environment variable.");
+            "Set 'ConnectionStrings:DefaultConnection' in appsettings.Development.json for local dev, " +
+            "or ensure the Render service has ConnectionStrings__DefaultConnection set.");
 
-    // Render provides DATABASE_URL as a PostgreSQL URI: postgres://user:pass@host:port/db
-    // Npgsql parses URI format natively. We append sslmode=require for Render's managed PostgreSQL
-    // which enforces SSL. Trust Server Certificate allows Render's self-signed cert.
+    // Render provides the connection string as a PostgreSQL URI: postgres://user:pass@host:port/db
+    // Npgsql supports URI format natively.
+    // Append SSL settings required by Render's managed PostgreSQL.
     if (!connectionString.Contains("SSL Mode") && !connectionString.Contains("sslmode"))
     {
         var sep = connectionString.Contains('?') ? "&" : "?";
@@ -89,7 +89,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     }
 
     options.UseNpgsql(connectionString, npgsql =>
-        // Retry up to 3 times on transient failures (e.g. DB container not ready yet on cold start)
+        // Retry on transient failures — guards against the DB container not being ready
+        // on first cold start (common on free-tier Render where services spin down)
         npgsql.EnableRetryOnFailure(maxRetryCount: 3));
 });
 

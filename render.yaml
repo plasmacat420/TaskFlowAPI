@@ -40,9 +40,12 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
 
-      # DATABASE_URL: injected automatically by Render from the linked database below
-      # The `fromDatabase` reference connects this service to the DB service defined below
-      - key: DATABASE_URL
+      # ConnectionStrings__DefaultConnection uses .NET's double-underscore env var convention.
+      # ASP.NET Core maps "ConnectionStrings__DefaultConnection" directly to
+      # Configuration["ConnectionStrings:DefaultConnection"], which GetConnectionString() reads.
+      # This bypasses any appsettings.json empty-string issue entirely.
+      # Render injects the full PostgreSQL URL (postgres://user:pass@host:port/db) as the value.
+      - key: ConnectionStrings__DefaultConnection
         fromDatabase:
           name: taskflow-db
           property: connectionString
