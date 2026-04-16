@@ -86,8 +86,10 @@ export class UserListComponent implements OnInit, OnDestroy {
           this.users = users;
           this.loading = false;
         },
-        error: () => {
-          this.error = 'Failed to load users. Is the API running?';
+        error: (err) => {
+          this.error = err.status === 0
+            ? 'API is starting up — wait ~30 seconds and refresh.'
+            : 'Failed to load users. Please try again.';
           this.loading = false;
         }
       });

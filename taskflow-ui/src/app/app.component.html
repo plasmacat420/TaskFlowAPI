@@ -48,14 +48,18 @@
     </ul>
   </nav>
 
+  <!-- ── API Status Banners ───────────────────────────────────────────────── -->
+  <!-- Shown while Render cold-starts (free tier sleeps after 15 min idle) -->
+  <div *ngIf="apiConnecting" class="api-banner api-banner-connecting">
+    ⏳ Connecting to API... (first visit may take ~30s while the server wakes up)
+  </div>
+  <div *ngIf="apiError" class="api-banner api-banner-error">
+    ⚠️ API unreachable. The server may be starting up — wait 30 seconds then
+    <button class="btn-retry" (click)="ngOnInit()">retry</button>.
+  </div>
+
   <!-- ── Main Content Area ────────────────────────────────────────────────── -->
   <main class="main-content">
-    <!--
-      router-outlet is the placeholder where Angular renders the routed component.
-      When the URL changes to /tasks, TaskListComponent renders here.
-      When URL changes to /dashboard, DashboardComponent renders here.
-      The nav bar above stays the same — only this area changes.
-    -->
     <router-outlet></router-outlet>
   </main>
 

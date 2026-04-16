@@ -73,7 +73,9 @@ export class TaskListComponent implements OnInit, OnDestroy {
           this.loading = false;
         },
         error: (err) => {
-          this.error = 'Failed to load tasks. Is the API running?';
+          this.error = err.status === 0
+            ? 'API is starting up — wait ~30 seconds and refresh.'
+            : 'Failed to load tasks. Please try again.';
           this.loading = false;
           console.error(err);
         }

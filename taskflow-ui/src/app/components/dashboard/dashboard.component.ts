@@ -136,7 +136,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load dashboard data. Is the API running?';
+        this.error = err.status === 0
+          ? 'API is waking up (Render free tier sleeps when idle). Wait ~30 seconds and refresh.'
+          : 'Failed to load dashboard data. Please try again.';
         this.loading = false;
         console.error('Dashboard load error:', err);
       }

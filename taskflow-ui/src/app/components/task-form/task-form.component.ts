@@ -173,7 +173,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
           this.router.navigate(['/tasks']);
         },
         error: (err) => {
-          this.error = `Failed to ${this.isEditMode ? 'update' : 'create'} task. Please try again.`;
+          this.error = err.status === 0
+            ? 'Cannot reach the API — it may still be waking up. Wait ~30 seconds and try again.'
+            : `Failed to ${this.isEditMode ? 'update' : 'create'} task. Please try again.`;
           this.submitting = false;
           console.error(err);
         }

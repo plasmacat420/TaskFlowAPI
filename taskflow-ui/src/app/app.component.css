@@ -105,6 +105,40 @@
   margin: 0 auto;
 }
 
+/* ── API Status Banners ───────────────────────────────────────────────────── */
+.api-banner {
+  padding: 10px 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.api-banner-connecting {
+  background: #fef3c7;
+  color: #92400e;
+  border-bottom: 1px solid #fcd34d;
+}
+
+.api-banner-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-bottom: 1px solid #fca5a5;
+}
+
+.btn-retry {
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+.btn-retry:hover { opacity: 0.7; }
+
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .menu-toggle {
