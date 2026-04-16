@@ -14,5 +14,5 @@
 export const environment = {
   production: false,
   // Local development: point to the .NET API running on localhost
-  apiUrl: 'http://localhost:5000/api'
+  apiUrl: 'https://taskflowapi-gydh.onrender.com/api'
 };

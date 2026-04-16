@@ -162,17 +162,32 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Redirect HTTP to HTTPS — security baseline
-// Render handles TLS termination, so this is also handled at the proxy level
-app.UseHttpsRedirection();
+// ── Middleware order matters — the pipeline is processed top to bottom ────────
+//
+// RULE: UseCors must run BEFORE UseHttpsRedirection.
+// WHY: Browsers send a CORS preflight (OPTIONS) request before the actual request.
+//      If UseHttpsRedirection runs first, it returns a 301 redirect with NO CORS headers.
+//      Browsers do NOT follow redirects on preflight — they treat the 301 as a CORS failure
+//      and block the actual request entirely.
+//      On Render, SSL is terminated at the proxy; the container receives plain HTTP.
+//      UseHttpsRedirection would redirect every request from the browser (which came in over HTTPS)
+//      causing this exact problem. The fix: CORS first, then the HTTPS redirect.
+//
+// RULE: UseRouting must run BEFORE UseCors.
+// WHY: In .NET 6+ endpoint routing, UseCors reads the matched endpoint to apply
+//      the correct policy. Without UseRouting first, no endpoint is matched yet.
+//
+// Correct order:  UseRouting → UseCors → UseHttpsRedirection → UseAuthorization → MapControllers
 
-// Apply CORS policy BEFORE routing/authorization
-// WHY before: CORS preflight (OPTIONS) requests need to be answered before auth middleware runs
-// Otherwise the preflight returns 401 and the browser blocks the actual request
+// Route requests to the correct controller action — must be first
+app.UseRouting();
+
+// Apply CORS policy — must be AFTER UseRouting and BEFORE UseHttpsRedirection
 app.UseCors("AllowFrontend");
 
-// Route requests to the correct controller action
-app.UseRouting();
+// Redirect HTTP to HTTPS AFTER CORS has already handled any preflight.
+// Render handles TLS termination externally, so this primarily affects local dev HTTPS.
+app.UseHttpsRedirection();
 
 // Authorization middleware — placeholder for future JWT/OAuth integration
 // Currently no auth is configured but the middleware is wired in the correct position

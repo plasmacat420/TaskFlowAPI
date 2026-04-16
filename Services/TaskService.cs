@@ -143,18 +143,19 @@ public class TaskService : ITaskService
             if (userExists is null) return null;
         }
 
-        // Partial update: only overwrite fields that were provided in the DTO
-        // WHY null-check: allows the client to send only the fields they want to change
+        // Apply updates from the DTO.
+        // For value types (Status, Priority): only update when the client sends them (HasValue).
+        // For nullable reference/value types that the client can explicitly CLEAR (Description,
+        // DueDate, AssignedUserId): always assign — null from the client means "clear this field".
+        // WHY: this is a full PUT from the Angular form which always sends every field.
+        //      Using ??(null-coalesce) for these fields would prevent the user from ever
+        //      unassigning a task or removing a due date, because null would be ignored.
         if (dto.Title is not null) task.Title = dto.Title;
-        if (dto.Description is not null) task.Description = dto.Description;
-        if (dto.Status.HasValue) task.Status = dto.Status.Value;
+        task.Description = dto.Description;          // null = "clear the description"
+        if (dto.Status.HasValue)   task.Status   = dto.Status.Value;
         if (dto.Priority.HasValue) task.Priority = dto.Priority.Value;
-        if (dto.DueDate.HasValue) task.DueDate = dto.DueDate.Value;
-        // AssignedUserId update: support both assigning and unassigning
-        // We use a workaround because null could mean "don't change" or "unassign"
-        // In this design, providing AssignedUserId=null in the DTO is treated as "unassign"
-        // if the field is explicitly included (dto.AssignedUserId is checked with HasValue)
-        task.AssignedUserId = dto.AssignedUserId ?? task.AssignedUserId;
+        task.DueDate        = dto.DueDate;           // null = "remove the due date"
+        task.AssignedUserId = dto.AssignedUserId;    // null = "unassign the task"
 
         // Note: AsNoTracking was used in the repository read, so we need to re-attach
         // EF Core will UPDATE all columns (not just changed ones) — acceptable for this app size
