@@ -79,18 +79,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             "Set 'ConnectionStrings:DefaultConnection' in appsettings.Development.json for local dev, " +
             "or ensure the Render service has ConnectionStrings__DefaultConnection set.");
 
-    // Render provides the connection string as a PostgreSQL URI: postgres://user:pass@host:port/db
-    // Npgsql supports URI format natively.
-    // Append SSL settings required by Render's managed PostgreSQL.
-    if (!connectionString.Contains("SSL Mode") && !connectionString.Contains("sslmode"))
+    // NpgsqlConnectionStringBuilder parses both URI format (postgres://user:pass@host/db)
+    // and key=value format. We use it to set SSL properties as typed .NET properties
+    // instead of string-appending — avoids malformed query strings with spaces in param names.
+    var npgsqlBuilder = new Npgsql.NpgsqlConnectionStringBuilder(connectionString)
     {
-        var sep = connectionString.Contains('?') ? "&" : "?";
-        connectionString += $"{sep}sslmode=require&Trust Server Certificate=true";
-    }
+        SslMode = Npgsql.SslMode.Require,
+        TrustServerCertificate = true  // Render uses self-signed certs on internal hostnames
+    };
 
-    options.UseNpgsql(connectionString, npgsql =>
-        // Retry on transient failures — guards against the DB container not being ready
-        // on first cold start (common on free-tier Render where services spin down)
+    options.UseNpgsql(npgsqlBuilder.ConnectionString, npgsql =>
+        // Retry on transient failures — guards against the DB not being ready on cold start
         npgsql.EnableRetryOnFailure(maxRetryCount: 3));
 });
 
