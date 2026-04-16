@@ -19,7 +19,7 @@
 
 # ── Stage 1: BUILD ────────────────────────────────────────────────────────────
 # Use the official .NET 8 SDK image as the build environment
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 # Set the working directory inside the container for the build stage
 WORKDIR /src
@@ -38,7 +38,7 @@ RUN dotnet publish TaskFlowAPI.csproj -c Release -o /app/publish \
 
 # ── Stage 2: RUNTIME ──────────────────────────────────────────────────────────
 # Use the minimal ASP.NET 8 runtime image (no SDK tooling)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 
 WORKDIR /app
 

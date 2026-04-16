@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <!--
-    TaskFlowAPI.csproj — .NET 8 Web API Project File
+    TaskFlowAPI.csproj — .NET 9 Web API Project File
     Architectural Pattern: Project Configuration
 
     WHY this file exists:
@@ -12,7 +12,7 @@
   -->
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <!-- Nullable: enable — enforces null-safe C# 8+ style. Prevents NullReferenceExceptions
          by requiring developers to explicitly handle nulls at compile time. -->
     <Nullable>enable</Nullable>
@@ -30,7 +30,7 @@
       This is the Open/Closed Principle applied to infrastructure: the ORM is open for extension
       (new DB providers) but closed for modification (EF Core API stays the same).
     -->
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
 
     <!--
       Microsoft.EntityFrameworkCore.Design
@@ -38,7 +38,7 @@
       Migrations are version-controlled, incremental database schema changes — the same way
       Git tracks code changes. Critical for zero-downtime deployments in production.
     -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4" />
 
     <!--
       Swashbuckle.AspNetCore
