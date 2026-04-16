@@ -27,6 +27,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using TaskFlowAPI.Data;
+using Npgsql;
 using TaskFlowAPI.Repositories;
 using TaskFlowAPI.Services;
 
@@ -79,10 +80,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             "Set 'ConnectionStrings:DefaultConnection' in appsettings.Development.json for local dev, " +
             "or ensure the Render service has ConnectionStrings__DefaultConnection set.");
 
-    // Pass the URI directly — Npgsql accepts postgres://user:pass@host/db format natively.
-    // No SSL manipulation needed: Render's *internal* database URL (hostname ending in -a)
-    // is on their private network and does not require SSL.
-    options.UseNpgsql(connectionString, npgsql =>
+    // UseNpgsql(string) expects key=value format, not postgresql:// URIs.
+    // NpgsqlDataSource.Create() accepts both formats and is the modern Npgsql entry point.
+    // Passing the data source to UseNpgsql lets EF Core use the already-parsed connection.
+    var dataSource = NpgsqlDataSource.Create(connectionString);
+    options.UseNpgsql(dataSource, npgsql =>
         npgsql.EnableRetryOnFailure(maxRetryCount: 3));
 });
 
