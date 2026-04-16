@@ -16,23 +16,32 @@
 }
 
 .kpi-card {
-  background: white;
+  background: rgba(255,255,255,.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 14px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 12px rgba(0,0,0,.2);
+  border: 1px solid rgba(79,172,222,.12);
   border-left: 4px solid transparent;
+  transition: transform .18s, box-shadow .18s, border-color .18s;
 }
 
-.kpi-total      { border-left-color: #6366f1; }
-.kpi-pending    { border-left-color: #f59e0b; }
-.kpi-inprogress { border-left-color: #3b82f6; }
-.kpi-done       { border-left-color: #10b981; }
-.kpi-high       { border-left-color: #ef4444; }
-.kpi-users      { border-left-color: #8b5cf6; }
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0,0,0,.3);
+  border-left-width: 4px;
+}
+
+.kpi-total      { border-left-color: #4facde; }
+.kpi-pending    { border-left-color: #f0c060; }
+.kpi-inprogress { border-left-color: #4facde; }
+.kpi-done       { border-left-color: #34d0a8; }
+.kpi-high       { border-left-color: #e05c6a; }
+.kpi-users      { border-left-color: #7ab8d8; }
 
 .kpi-icon {
   font-size: 1.6rem;
@@ -53,9 +62,7 @@
 }
 
 /* ── Progress Card ────────────────────────────────────────────────────────── */
-.progress-card {
-  margin-bottom: 24px;
-}
+.progress-card { margin-bottom: 24px; }
 
 .progress-header {
   display: flex;
@@ -64,21 +71,23 @@
   margin-bottom: 10px;
 }
 
-.progress-label { font-weight: 600; font-size: 0.9rem; }
+.progress-label { font-weight: 600; font-size: 0.9rem; color: var(--color-text); }
 .progress-pct   { font-weight: 700; color: var(--color-primary); font-size: 1rem; }
 
 .progress-bar-bg {
-  background: #e2e8f0;
+  background: rgba(79,172,222,.12);
   height: 10px;
   border-radius: 999px;
   overflow: hidden;
+  border: 1px solid rgba(79,172,222,.15);
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4f46e5, #818cf8);
+  background: linear-gradient(90deg, #3a8fbf, #4facde, #a8d0e8);
   border-radius: 999px;
   transition: width 0.6s ease;
+  box-shadow: 0 0 10px rgba(79,172,222,.5);
 }
 
 .progress-sub {
@@ -102,22 +111,26 @@
 }
 
 /* Recent tasks */
-.recent-task-list { display: flex; flex-direction: column; gap: 10px; }
+.recent-task-list { display: flex; flex-direction: column; gap: 8px; }
 
 .recent-task-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 12px;
-  background: #f8fafc;
+  background: rgba(79,172,222,.06);
+  border: 1px solid rgba(79,172,222,.1);
   border-radius: 8px;
   gap: 12px;
+  transition: background .18s;
 }
+.recent-task-item:hover { background: rgba(79,172,222,.1); }
 
 .recent-task-title {
   font-weight: 500;
   font-size: 0.875rem;
   display: block;
+  color: var(--color-text);
 }
 
 .recent-task-meta {
@@ -128,23 +141,22 @@
 .recent-task-badges { display: flex; gap: 6px; flex-shrink: 0; }
 
 /* Team list */
-.team-list { display: flex; flex-direction: column; gap: 10px; }
+.team-list { display: flex; flex-direction: column; gap: 8px; }
 
 .team-item {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(79,172,222,.08);
 }
-
 .team-item:last-child { border-bottom: none; }
 
 .user-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--color-primary);
+  background: linear-gradient(135deg, #3a8fbf, #4facde);
   color: white;
   display: flex;
   align-items: center;
@@ -152,11 +164,12 @@
   font-weight: 700;
   font-size: 0.9rem;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(79,172,222,.3);
 }
 
-.user-name { font-weight: 500; font-size: 0.875rem; }
+.user-name  { font-weight: 500; font-size: 0.875rem; color: var(--color-text); }
 .user-email { font-size: 0.78rem; color: var(--color-text-secondary); }
-.user-info { flex: 1; min-width: 0; }
+.user-info  { flex: 1; min-width: 0; }
 
 .task-count-badge {
   font-size: 1rem;
@@ -173,13 +186,13 @@
 .card-footer {
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid rgba(79,172,222,.1);
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .bottom-grid { grid-template-columns: 1fr; }
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-grid    { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 480px) {

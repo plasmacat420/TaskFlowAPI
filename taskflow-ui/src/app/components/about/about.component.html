@@ -1,0 +1,618 @@
+<!-- about.component.html — TaskFlow Documentation -->
+<div class="about-page">
+
+  <!-- ══════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-dots"></div>
+    <div class="hero-inner">
+      <span class="hero-tag">Full-Stack Portfolio · Built with Claude</span>
+      <h1>TaskFlow</h1>
+      <p class="hero-lead">
+        A task management app built end-to-end with <strong>.NET 9</strong>, <strong>EF Core</strong>,
+        <strong>PostgreSQL</strong> and <strong>Angular 17</strong>. This page documents how it's
+        designed, what patterns it uses, the real bugs that were hit along the way, and the role
+        Claude played in building it.
+      </p>
+      <div class="hero-actions">
+        <a [href]="liveUrl"            target="_blank" class="btn-hero btn-solid">↗ Live App</a>
+        <a [href]="githubUrl"          target="_blank" class="btn-hero btn-ghost">GitHub</a>
+        <a [href]="apiUrl + '/swagger'" target="_blank" class="btn-hero btn-ghost">Swagger Docs</a>
+      </div>
+      <div class="tech-pills">
+        <span>.NET 9</span><span>C# 13</span><span>EF Core 9</span>
+        <span>PostgreSQL</span><span>Angular 17</span><span>RxJS</span>
+        <span>Render</span><span>GitHub Pages</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="doc-body">
+
+    <!-- ══════════════════════════════════════════
+         WHAT IS IT
+    ══════════════════════════════════════════ -->
+    <section class="doc-section">
+      <div class="section-eyebrow">Overview</div>
+      <h2>What TaskFlow does</h2>
+
+      <div class="two-col">
+        <div>
+          <p>
+            TaskFlow lets you create tasks, set their status and priority, assign them to team members,
+            and track due dates. Nothing revolutionary on the surface — the point was never the features.
+            The point was building something complete: a real API, a real database, a real deployed frontend,
+            with all the rough edges that come with that.
+          </p>
+          <p>
+            It covers the full cycle — a browser sends an HTTP request, the .NET API processes it through
+            several layers, EF Core writes or reads from PostgreSQL on Render, and the response comes back
+            as JSON that Angular renders. Every step in that chain is real, not mocked.
+          </p>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card"><span class="stat-num">2</span><span class="stat-lbl">Entities<br><small>Task · User</small></span></div>
+          <div class="stat-card"><span class="stat-num">12</span><span class="stat-lbl">API Endpoints<br><small>Full CRUD</small></span></div>
+          <div class="stat-card"><span class="stat-num">4</span><span class="stat-lbl">Arch Layers<br><small>Controller→DB</small></span></div>
+          <div class="stat-card"><span class="stat-num">4</span><span class="stat-lbl">UI Components<br><small>Angular 17</small></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         ARCHITECTURE
+    ══════════════════════════════════════════ -->
+    <section class="doc-section">
+      <div class="section-eyebrow">Architecture</div>
+      <h2>How the pieces fit together</h2>
+      <p class="section-intro">
+        The backend is split into four layers, each with a single responsibility. The rule is simple —
+        a layer can only talk to the one directly below it. Controllers don't touch the database.
+        Repositories don't contain business rules. Here's what that looks like in practice:
+      </p>
+
+      <!-- Flow diagram -->
+      <div class="flow-diagram">
+        <div class="flow-group flow-frontend">
+          <div class="flow-group-label">Browser — Angular 17</div>
+          <div class="flow-node node-component">
+            <div class="flow-node-icon">◈</div>
+            <div class="flow-node-name">Components</div>
+            <div class="flow-node-sub">Dashboard · Tasks · Form · Users</div>
+          </div>
+          <div class="flow-connector v">↓</div>
+          <div class="flow-node node-service-fe">
+            <div class="flow-node-icon">⟳</div>
+            <div class="flow-node-name">Angular Services</div>
+            <div class="flow-node-sub">HttpClient calls to the API</div>
+          </div>
+        </div>
+
+        <div class="flow-bridge">
+          <div class="flow-bridge-line"></div>
+          <div class="flow-bridge-label">HTTP / JSON</div>
+          <div class="flow-bridge-line"></div>
+        </div>
+
+        <div class="flow-group flow-backend">
+          <div class="flow-group-label">Server — .NET 9 Web API</div>
+          <div class="flow-node node-controller">
+            <div class="flow-node-icon">⊕</div>
+            <div class="flow-node-name">Controllers</div>
+            <div class="flow-node-sub">Routes · HTTP verbs · Status codes</div>
+          </div>
+          <div class="flow-connector v">↓</div>
+          <div class="flow-node node-service-be">
+            <div class="flow-node-icon">⚙</div>
+            <div class="flow-node-name">Services</div>
+            <div class="flow-node-sub">Business rules · DTO mapping · Validation</div>
+          </div>
+          <div class="flow-connector v">↓</div>
+          <div class="flow-node node-repo">
+            <div class="flow-node-icon">⊞</div>
+            <div class="flow-node-name">Repositories</div>
+            <div class="flow-node-sub">EF Core queries · AsNoTracking · Include()</div>
+          </div>
+          <div class="flow-connector v">↓</div>
+          <div class="flow-node node-db">
+            <div class="flow-node-icon">◉</div>
+            <div class="flow-node-name">PostgreSQL</div>
+            <div class="flow-node-sub">Hosted on Render · Auto-migrated on startup</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Why layers -->
+      <div class="insight-box">
+        <div class="insight-icon">💡</div>
+        <div>
+          <strong>Why bother with four layers for a simple app?</strong> Because each layer can
+          change independently. You could swap PostgreSQL for SQL Server by only changing the
+          repository. You could add auth or caching to the service layer without touching the
+          controllers. And in tests, you can swap the real repository for a fake one — the service
+          doesn't know the difference because it only depends on the interface, not the implementation.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         C# / .NET IN PRACTICE
+    ══════════════════════════════════════════ -->
+    <section class="doc-section">
+      <div class="section-eyebrow">C# &amp; .NET in Practice</div>
+      <h2>The code, explained</h2>
+      <p class="section-intro">
+        Here are the key .NET patterns used throughout the backend — not as abstract concepts,
+        but as they actually appear in this codebase.
+      </p>
+
+      <!-- DI -->
+      <div class="topic-block">
+        <div class="topic-header">
+          <span class="topic-badge badge-blue">Dependency Injection</span>
+          <h3>Classes declare what they need, .NET provides it</h3>
+        </div>
+        <div class="topic-body">
+          <div class="topic-text">
+            <p>
+              Instead of a class creating its own dependencies with <code>new</code>, ASP.NET Core's
+              built-in DI container injects them through the constructor. <code>TaskService</code> needs
+              a repository — it just asks for <code>ITaskRepository</code> in its constructor and the
+              framework handles the rest.
+            </p>
+            <p>
+              Everything database-related is registered as <strong>Scoped</strong> — one instance per
+              HTTP request. This matters because <code>TaskService</code>, <code>TaskRepository</code>,
+              and <code>AppDbContext</code> all share the same instance within one request, which means
+              they share the same EF Core change tracker. Make <code>DbContext</code> a Singleton and
+              two parallel requests would corrupt each other's data.
+            </p>
+          </div>
+          <div class="code-block">
+            <div class="code-file">Program.cs</div>
+            <pre ngNonBindable><code><span class="c-comment">// Register as Scoped — shared within one HTTP request</span>
+builder.Services.<span class="c-fn">AddScoped</span>&lt;<span class="c-type">ITaskRepository</span>, <span class="c-type">TaskRepository</span>&gt;();
+builder.Services.<span class="c-fn">AddScoped</span>&lt;<span class="c-type">IUserRepository</span>, <span class="c-type">UserRepository</span>&gt;();
+builder.Services.<span class="c-fn">AddScoped</span>&lt;<span class="c-type">ITaskService</span>,    <span class="c-type">TaskService</span>&gt;();
+
+<span class="c-comment">// TaskService constructor — .NET injects both repositories automatically</span>
+<span class="c-kw">public</span> <span class="c-fn">TaskService</span>(<span class="c-type">ITaskRepository</span> taskRepo, <span class="c-type">IUserRepository</span> userRepo)
+<span class="c-punct">&#123;</span>
+    _taskRepository = taskRepo;
+    _userRepository = userRepo;
+<span class="c-punct">&#125;</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- async/await -->
+      <div class="topic-block">
+        <div class="topic-header">
+          <span class="topic-badge badge-teal">async / await</span>
+          <h3>Never block a thread waiting for the database</h3>
+        </div>
+        <div class="topic-body">
+          <div class="topic-text">
+            <p>
+              Every method that touches the database is async. When a query is waiting on PostgreSQL,
+              the thread is released back to the pool to handle other requests. A synchronous server
+              blocks one thread per in-flight DB call — under load, you exhaust the thread pool fast.
+              With async, a small number of threads can serve hundreds of concurrent requests.
+            </p>
+            <p>
+              The <code>async Task&lt;T&gt;</code> return type is C#'s way of saying "this method will
+              eventually return a T, but not necessarily right now." <code>await</code> suspends the method
+              until the work completes, then resumes — without blocking the thread.
+            </p>
+          </div>
+          <div class="code-block">
+            <div class="code-file">TaskRepository.cs</div>
+            <pre ngNonBindable><code><span class="c-kw">public async</span> <span class="c-type">Task</span>&lt;<span class="c-type">IEnumerable</span>&lt;<span class="c-type">TaskItem</span>&gt;&gt; <span class="c-fn">GetAllAsync</span>()
+<span class="c-punct">&#123;</span>
+    <span class="c-kw">return await</span> _context.Tasks
+        .<span class="c-fn">Include</span>(t =&gt; t.AssignedUser)  <span class="c-comment">// JOIN to users table</span>
+        .<span class="c-fn">AsNoTracking</span>()               <span class="c-comment">// read-only — skip snapshot overhead</span>
+        .<span class="c-fn">ToListAsync</span>();               <span class="c-comment">// executes SQL, releases thread while waiting</span>
+<span class="c-punct">&#125;</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- EF Core + LINQ -->
+      <div class="topic-block">
+        <div class="topic-header">
+          <span class="topic-badge badge-sky">EF Core &amp; LINQ</span>
+          <h3>Write C# — EF Core writes the SQL</h3>
+        </div>
+        <div class="topic-body">
+          <div class="topic-text">
+            <p>
+              Entity Framework Core maps C# classes to database tables. The <code>TaskItem</code>
+              class becomes the <code>Tasks</code> table; each property becomes a column. You never
+              write raw SQL — you write LINQ, and EF Core translates it.
+            </p>
+            <p>
+              Important distinction: LINQ on <code>IQueryable</code> (a <code>DbSet</code>) builds
+              an expression tree — no database call yet. The SQL only runs when you materialize it
+              with <code>ToListAsync()</code>. After that, any further LINQ is in-memory C#. This is
+              why <code>.Where()</code> before <code>ToListAsync()</code> becomes a SQL <code>WHERE</code>
+              clause, but <code>.Where()</code> after it filters in memory.
+            </p>
+          </div>
+          <div class="code-block">
+            <div class="code-file">TaskRepository.cs + TaskService.cs</div>
+            <pre ngNonBindable><code><span class="c-comment">// In the repository — runs as SQL WHERE clause</span>
+<span class="c-kw">return await</span> _context.Tasks
+    .<span class="c-fn">Where</span>(t =&gt; t.AssignedUserId == userId)  <span class="c-comment">// → SQL WHERE</span>
+    .<span class="c-fn">Include</span>(t =&gt; t.AssignedUser)             <span class="c-comment">// → SQL JOIN</span>
+    .<span class="c-fn">AsNoTracking</span>()
+    .<span class="c-fn">ToListAsync</span>();                           <span class="c-comment">// ← SQL executes here</span>
+
+<span class="c-comment">// In the service — runs in memory AFTER the DB call</span>
+<span class="c-kw">return</span> tasks.<span class="c-fn">Select</span>(<span class="c-type">TaskResponseDto</span>.FromEntity);  <span class="c-comment">// C# projection</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- DTOs -->
+      <div class="topic-block">
+        <div class="topic-header">
+          <span class="topic-badge badge-blue">DTOs</span>
+          <h3>What the API sends is not what the database stores</h3>
+        </div>
+        <div class="topic-body">
+          <div class="topic-text">
+            <p>
+              The <code>TaskItem</code> entity has navigation properties like <code>AssignedUser</code>
+              — the full User object loaded by EF Core. If you return that directly from the API, you'd
+              serialize the entire user object nested in every task, risk circular reference exceptions,
+              and couple your API contract to your database schema.
+            </p>
+            <p>
+              DTOs (Data Transfer Objects) are the translation layer. <code>TaskResponseDto</code> only
+              carries what the frontend needs — <code>AssignedUserName</code> as a plain string, not the
+              full <code>User</code> object. Rename a database column and nothing in the API response
+              changes. The <code>record</code> keyword makes these immutable by default, which is exactly
+              what a response shape should be.
+            </p>
+          </div>
+          <div class="code-block">
+            <div class="code-file">TaskResponseDto.cs</div>
+            <pre ngNonBindable><code><span class="c-kw">public record</span> <span class="c-type">TaskResponseDto</span>
+<span class="c-punct">&#123;</span>
+    <span class="c-kw">public</span> <span class="c-type">Guid</span>           Id             <span class="c-punct">&#123; <span class="c-kw">get</span>; <span class="c-kw">init</span>; &#125;</span>
+    <span class="c-kw">public</span> <span class="c-kw">string</span>         Title          <span class="c-punct">&#123; <span class="c-kw">get</span>; <span class="c-kw">init</span>; &#125;</span>
+    <span class="c-kw">public</span> <span class="c-kw">string</span>?        AssignedUserName <span class="c-punct">&#123; <span class="c-kw">get</span>; <span class="c-kw">init</span>; &#125;</span>
+    <span class="c-kw">public</span> <span class="c-type">TaskItemStatus</span> Status         <span class="c-punct">&#123; <span class="c-kw">get</span>; <span class="c-kw">init</span>; &#125;</span>
+    <span class="c-comment">// entity has AssignedUser (full User object) — DTO flattens it to just the name</span>
+
+    <span class="c-kw">public static</span> <span class="c-type">TaskResponseDto</span> <span class="c-fn">FromEntity</span>(<span class="c-type">TaskItem</span> t) =&gt; <span class="c-kw">new</span>()
+    <span class="c-punct">&#123;</span>
+        Id              = t.Id,
+        Title           = t.Title,
+        AssignedUserName = t.AssignedUser?.Name
+    <span class="c-punct">&#125;;</span>
+<span class="c-punct">&#125;</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middleware -->
+      <div class="topic-block">
+        <div class="topic-header">
+          <span class="topic-badge badge-sky">ASP.NET Core</span>
+          <h3>Middleware — every request passes through a pipeline</h3>
+        </div>
+        <div class="topic-body">
+          <div class="topic-text">
+            <p>
+              Before any controller sees a request, it passes through a chain of middleware in
+              <code>Program.cs</code>. Each piece can inspect the request, modify it, short-circuit
+              with its own response, or pass it along. Order matters — a lot.
+            </p>
+            <p>
+              The middleware pipeline is also bidirectional: response flows back through the same chain
+              in reverse. CORS headers must be added before the response is committed, so <code>UseCors</code>
+              must be registered before anything that might write a response — including
+              <code>UseHttpsRedirection</code>. This exact ordering caused a real bug in this app
+              (more on that below).
+            </p>
+          </div>
+          <div class="code-block">
+            <div class="code-file">Program.cs — middleware order</div>
+            <pre ngNonBindable><code>app.<span class="c-fn">UseRouting</span>();
+app.<span class="c-fn">UseCors</span>(<span class="c-str">"AllowFrontend"</span>);  <span class="c-comment">// must be BEFORE https redirect</span>
+app.<span class="c-fn">UseHttpsRedirection</span>();
+app.<span class="c-fn">UseAuthorization</span>();
+app.<span class="c-fn">MapControllers</span>();</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         ANGULAR SIDE
+    ══════════════════════════════════════════ -->
+    <section class="doc-section">
+      <div class="section-eyebrow">Frontend</div>
+      <h2>The Angular side</h2>
+      <p class="section-intro">
+        The frontend is a standard Angular 17 app using NgModule (not standalone components) —
+        the traditional enterprise pattern. Four components, two services, reactive forms, and RxJS
+        for async data handling.
+      </p>
+
+      <div class="fe-grid">
+
+        <div class="fe-card">
+          <div class="fe-card-head">
+            <span class="fe-icon">◈</span>
+            <strong>Components</strong>
+          </div>
+          <p>
+            <strong>Dashboard</strong> shows task KPIs and a team overview. <strong>TaskList</strong>
+            renders all tasks in a filterable card grid. <strong>TaskForm</strong> handles both create
+            and edit in one component — it detects mode from the route parameter <code>:id</code>.
+            <strong>UserList</strong> manages the team with inline editing.
+          </p>
+        </div>
+
+        <div class="fe-card">
+          <div class="fe-card-head">
+            <span class="fe-icon">⟳</span>
+            <strong>Reactive Forms</strong>
+          </div>
+          <p>
+            Forms are built with <code>FormGroup</code> and <code>FormControl</code> rather than
+            <code>ngModel</code>. The structure, defaults, and validation rules all live in the
+            TypeScript class — not scattered in the HTML template. This makes them easier to
+            test and extend. <code>form.markAllAsTouched()</code> triggers error display on submit.
+          </p>
+        </div>
+
+        <div class="fe-card">
+          <div class="fe-card-head">
+            <span class="fe-icon">≋</span>
+            <strong>RxJS Patterns</strong>
+          </div>
+          <p>
+            <code>forkJoin</code> runs two HTTP calls in parallel and waits for both — used when
+            loading a task alongside the user list for the edit form. <code>takeUntil(destroy$)</code>
+            automatically cancels all subscriptions when the component is destroyed, preventing memory
+            leaks from dangling HTTP observers.
+          </p>
+        </div>
+
+        <div class="fe-card">
+          <div class="fe-card-head">
+            <span class="fe-icon">⌾</span>
+            <strong>Environment Files</strong>
+          </div>
+          <p>
+            <code>environment.ts</code> and <code>environment.prod.ts</code> hold the API base URL.
+            At build time, <code>ng build --configuration=production</code> swaps the file automatically.
+            The app code always imports from <code>environment.ts</code> — it never needs to know
+            which environment it's running in.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="code-block" style="margin-top:20px">
+        <div class="code-file">task-form.component.ts — forkJoin + takeUntil</div>
+        <pre ngNonBindable><code><span class="c-comment">// Load task and users list in parallel — don't wait for one before starting the other</span>
+<span class="c-fn">forkJoin</span>(<span class="c-punct">&#123;</span>
+  task:  <span class="c-kw">this</span>.taskService.<span class="c-fn">getTaskById</span>(<span class="c-kw">this</span>.taskId!),
+  users: <span class="c-kw">this</span>.userService.<span class="c-fn">getAllUsers</span>()
+<span class="c-punct">&#125;)</span>
+.<span class="c-fn">pipe</span>(<span class="c-fn">takeUntil</span>(<span class="c-kw">this</span>.destroy$))  <span class="c-comment">// cancel if component is destroyed mid-flight</span>
+.<span class="c-fn">subscribe</span>(<span class="c-punct">(</span><span class="c-punct">&#123;</span> task, users <span class="c-punct">&#125;)</span> =&gt; <span class="c-punct">&#123;</span>
+  <span class="c-kw">this</span>.users = users;
+  <span class="c-kw">this</span>.form.<span class="c-fn">patchValue</span>(<span class="c-punct">&#123;</span> title: task.title, status: task.status <span class="c-punct">&#125;</span>);
+<span class="c-punct">&#125;);</span></code></pre>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         BUGS
+    ══════════════════════════════════════════ -->
+    <section class="doc-section">
+      <div class="section-eyebrow">Things that broke</div>
+      <h2>Bugs worth remembering</h2>
+      <p class="section-intro">
+        These weren't hypothetical edge cases. They hit during actual testing against the live deployed
+        app. Each one took real debugging to understand — which is why they're worth documenting.
+      </p>
+
+      <div class="bugs-list">
+
+        <div class="bug-item">
+          <div class="bug-meta">
+            <span class="bug-num">01</span>
+            <span class="bug-tag tag-cors">CORS</span>
+          </div>
+          <div class="bug-detail">
+            <h4>CORS preflight blocked by HTTPS redirect</h4>
+            <p>
+              The Angular app on GitHub Pages was getting a "No Access-Control-Allow-Origin header" error.
+              The CORS policy was configured correctly — but it wasn't running first. <code>UseHttpsRedirection</code>
+              was registered before <code>UseCors</code> in the middleware pipeline.
+            </p>
+            <p>
+              When a browser sends an HTTP request to an HTTPS API, it first sends an <strong>OPTIONS preflight</strong>
+              to check if cross-origin is allowed. That preflight hit the redirect middleware first and got a
+              <code>301</code> response with no CORS headers. Browsers refuse to follow redirects for preflights —
+              they just fail with a CORS error, which completely masks the real cause.
+            </p>
+            <div class="bug-fix-strip">
+              Fix: move <code>UseCors</code> above <code>UseHttpsRedirection</code>. Three lines reordered. Hours of head-scratching before that.
+            </div>
+          </div>
+        </div>
+
+        <div class="bug-item">
+          <div class="bug-meta">
+            <span class="bug-num">02</span>
+            <span class="bug-tag tag-efcore">EF Core</span>
+          </div>
+          <div class="bug-detail">
+            <h4>Unassigning a task did nothing — silently</h4>
+            <p>
+              Setting a task's assignee to "None" would save with no error, but refresh the page and the original user
+              was still there. The update was being silently ignored.
+            </p>
+            <p>
+              The repository uses <code>.Include(t =&gt; t.AssignedUser)</code> to eagerly load the user for the response DTO.
+              When you then set <code>task.AssignedUserId = null</code> and call <code>_context.Update(task)</code>,
+              EF Core reconciles the foreign key value <em>from the navigation property</em> — not from the FK field.
+              Since <code>task.AssignedUser</code> still held the User object from the original load, EF Core put the
+              old ID straight back.
+            </p>
+            <div class="bug-fix-strip">
+              Fix: set <code>task.AssignedUser = null</code> first, then <code>task.AssignedUserId = dto.AssignedUserId</code>.
+              Clearing the navigation property removes EF Core's "authoritative" source, so the FK value sticks.
+            </div>
+          </div>
+        </div>
+
+        <div class="bug-item">
+          <div class="bug-meta">
+            <span class="bug-num">03</span>
+            <span class="bug-tag tag-npgsql">Npgsql</span>
+          </div>
+          <div class="bug-detail">
+            <h4>DateTime crash — Kind=Unspecified rejected by PostgreSQL</h4>
+            <p>
+              Saving a task with a due date threw a <code>DbUpdateException</code>: <em>"Cannot write DateTime with
+              Kind=Unspecified to PostgreSQL type 'timestamp with time zone'"</em>. This only started in Npgsql 9,
+              which became strict about it.
+            </p>
+            <p>
+              HTML's <code>&lt;input type="date"&gt;</code> gives back a string like <code>"2025-06-01"</code> — no timezone.
+              <code>System.Text.Json</code> parses that as a <code>DateTime</code> with <code>Kind=Unspecified</code>.
+              PostgreSQL's <code>timestamptz</code> column requires UTC, so Npgsql 9 rejects it outright.
+            </p>
+            <div class="bug-fix-strip">
+              Fix: Angular appends <code>T00:00:00Z</code> to the date string before sending. Backend also calls
+              <code>DateTime.SpecifyKind(dt, DateTimeKind.Utc)</code> as a safety net. Both layers now guarantee UTC.
+            </div>
+          </div>
+        </div>
+
+        <div class="bug-item">
+          <div class="bug-meta">
+            <span class="bug-num">04</span>
+            <span class="bug-tag tag-render">Render</span>
+          </div>
+          <div class="bug-detail">
+            <h4>Cold start disguised as a CORS error</h4>
+            <p>
+              After fixing the real CORS bug, CORS errors kept appearing on first load — but only sometimes,
+              and only after the app had been idle for a while. The backend was fine; the CORS config was correct.
+            </p>
+            <p>
+              Render's free tier spins down containers after 15 minutes of inactivity. The first request after
+              that hits a cold start and times out — no response at all. The browser interprets a missing response
+              as missing CORS headers and reports a CORS error. The actual problem was a sleeping server,
+              not cross-origin policy.
+            </p>
+            <div class="bug-fix-strip">
+              Fix: <code>AppComponent.ngOnInit()</code> now pings the API immediately on startup and shows a
+              "Connecting..." banner. <code>err.status === 0</code> detects a network timeout (vs an actual HTTP error)
+              so the message is accurate.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         CLAUDE'S ROLE
+    ══════════════════════════════════════════ -->
+    <section class="doc-section">
+      <div class="section-eyebrow">Built with AI</div>
+      <h2>How Claude fit into this</h2>
+
+      <div class="claude-section">
+        <div class="claude-intro">
+          <p>
+            This app was built using Claude as a pair programmer throughout. That's worth being upfront about —
+            not as a disclaimer, but because it's actually an interesting part of how the project went.
+          </p>
+          <p>
+            The role Claude played wasn't "generate the code and done." It was more like having a very fast
+            collaborator who never gets tired. Architecture decisions, debugging sessions, explaining why
+            EF Core was behaving a certain way, writing the deployment config — all of that happened in
+            conversation. The bugs above were each diagnosed through back-and-forth, not by Claude
+            magically knowing the answer.
+          </p>
+        </div>
+
+        <div class="claude-cards">
+
+          <div class="claude-card">
+            <div class="claude-card-icon">⌨</div>
+            <h4>Scaffolding &amp; boilerplate</h4>
+            <p>
+              The layered architecture — models, repositories, services, controllers, DTOs — was set up
+              quickly with Claude generating the initial structure. This freed up time to focus on what
+              actually matters: the design decisions and the tricky parts.
+            </p>
+          </div>
+
+          <div class="claude-card">
+            <div class="claude-card-icon">🔍</div>
+            <h4>Debugging</h4>
+            <p>
+              Every bug in the section above was debugged with Claude. Pasting an error, describing
+              what was happening, walking through the stack trace. Claude could identify the EF Core
+              nav property conflict quickly because it's a known pattern — the kind of thing that's
+              hard to Google your way to without the right vocabulary.
+            </p>
+          </div>
+
+          <div class="claude-card">
+            <div class="claude-card-icon">✎</div>
+            <h4>Documentation &amp; this page</h4>
+            <p>
+              The in-code comments, the architecture doc, and this page were all written with Claude.
+              The goal was comments that teach — that explain <em>why</em> a pattern is used, not
+              just <em>what</em> it does. That kind of writing benefits from a collaborator who can
+              hold the full context of the codebase.
+            </p>
+          </div>
+
+          <div class="claude-card">
+            <div class="claude-card-icon">△</div>
+            <h4>Where human judgment came in</h4>
+            <p>
+              Deciding <em>what</em> to build and how to structure it, choosing which patterns are
+              appropriate for the scope, recognising when a suggested approach was over-engineered —
+              those stayed human. Claude is fast at execution; the architectural instinct comes from
+              experience.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         FOOTER
+    ══════════════════════════════════════════ -->
+    <footer class="doc-footer">
+      <div class="footer-links">
+        <a [href]="liveUrl"            target="_blank">Live App</a>
+        <span>·</span>
+        <a [href]="githubUrl"          target="_blank">GitHub</a>
+        <span>·</span>
+        <a [href]="apiUrl + '/swagger'" target="_blank">API Docs</a>
+      </div>
+      <p>.NET 9 · EF Core 9 · PostgreSQL · Angular 17 · Deployed on Render &amp; GitHub Pages</p>
+    </footer>
+
+  </div>
+</div>

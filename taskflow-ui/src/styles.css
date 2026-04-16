@@ -1,42 +1,40 @@
 /*
  * styles.css — Global Styles
- *
- * WHY global styles (not component styles):
- * Global styles define app-wide CSS custom properties (variables), typography baseline,
- * and utility classes shared across all components.
- * Component-specific styles go in each component's .css file (component encapsulation).
- *
- * Angular uses ViewEncapsulation.Emulated by default — component styles are scoped
- * to their component via attribute selectors (equivalent to CSS Modules).
+ * Theme: sky blue · rainy clouds · premium glass morphism
  */
 
-/* ── CSS Custom Properties (Design Tokens) ───────────────────────────────── */
+/* ── Design Tokens ───────────────────────────────────────────────────────── */
 :root {
-  /* Color palette */
-  --color-primary: #4f46e5;
-  --color-primary-dark: #3730a3;
-  --color-primary-light: #818cf8;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-info: #3b82f6;
+  /* Sky blue palette */
+  --color-primary:       #4facde;
+  --color-primary-dark:  #3a8fbf;
+  --color-primary-light: #a8d0e8;
 
-  /* Status colors */
-  --color-pending: #f59e0b;
-  --color-in-progress: #3b82f6;
-  --color-done: #10b981;
+  /* Semantic colours — sky-tinted */
+  --color-success:  #34d0a8;
+  --color-warning:  #f0c060;
+  --color-danger:   #e05c6a;
+  --color-info:     #4facde;
 
-  /* Priority colors */
-  --color-priority-low: #10b981;
-  --color-priority-medium: #f59e0b;
-  --color-priority-high: #ef4444;
+  /* Status */
+  --color-pending:     #f0c060;
+  --color-in-progress: #4facde;
+  --color-done:        #34d0a8;
 
-  /* Neutrals */
-  --color-bg: #f0f2f5;
-  --color-surface: #ffffff;
-  --color-border: #e2e8f0;
-  --color-text: #1a202c;
-  --color-text-secondary: #718096;
+  /* Priority */
+  --color-priority-low:    #34d0a8;
+  --color-priority-medium: #f0c060;
+  --color-priority-high:   #e05c6a;
+
+  /* Surfaces */
+  --color-bg:        #0d1b2e;
+  --color-surface:   rgba(255,255,255,0.05);
+  --color-border:    rgba(79,172,222,0.15);
+  --color-border-hover: rgba(79,172,222,0.35);
+
+  /* Text */
+  --color-text:           #dce9f5;
+  --color-text-secondary: #6b8fa8;
 
   /* Spacing */
   --space-xs: 4px;
@@ -45,18 +43,28 @@
   --space-lg: 24px;
   --space-xl: 32px;
 
-  /* Border radius */
+  /* Radii */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.25);
+  --shadow-md: 0 6px 20px rgba(0,0,0,0.3);
 }
 
-/* ── Base Reset ───────────────────────────────────────────────────────────── */
+/* ── Base Reset ──────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* Fixed sky background that stays behind everything */
+  background:
+    radial-gradient(ellipse 120% 60% at 50% -10%, rgba(79,172,222,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 60%  40% at 90%  40%, rgba(52,160,210,.1)  0%, transparent 50%),
+    radial-gradient(ellipse 50%  35% at 10%  70%, rgba(79,172,222,.07) 0%, transparent 50%),
+    #0d1b2e;
+  min-height: 100%;
+}
 
 body {
   margin: 0;
@@ -64,41 +72,41 @@ body {
                'Helvetica Neue', Arial, sans-serif;
   font-size: 14px;
   color: var(--color-text);
-  background: var(--color-bg);
+  background: transparent;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Utility Classes ──────────────────────────────────────────────────────── */
-
-/* Card container */
+/* ── Card ────────────────────────────────────────────────────────────────── */
 .card {
-  background: var(--color-surface);
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
 }
 
-/* Status badges */
+/* ── Badges ──────────────────────────────────────────────────────────────── */
 .badge {
   display: inline-block;
   padding: 3px 10px;
   border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.badge-pending    { background: #fef3c7; color: #92400e; }
-.badge-inprogress { background: #dbeafe; color: #1e40af; }
-.badge-done       { background: #d1fae5; color: #065f46; }
-.badge-low        { background: #d1fae5; color: #065f46; }
-.badge-medium     { background: #fef3c7; color: #92400e; }
-.badge-high       { background: #fee2e2; color: #991b1b; }
+.badge-pending    { background: rgba(240,192,96,.18);  color: #f0c060; border: 1px solid rgba(240,192,96,.3); }
+.badge-inprogress { background: rgba(79,172,222,.18);  color: #4facde; border: 1px solid rgba(79,172,222,.3); }
+.badge-done       { background: rgba(52,208,168,.18);  color: #34d0a8; border: 1px solid rgba(52,208,168,.3); }
+.badge-low        { background: rgba(52,208,168,.18);  color: #34d0a8; border: 1px solid rgba(52,208,168,.3); }
+.badge-medium     { background: rgba(240,192,96,.18);  color: #f0c060; border: 1px solid rgba(240,192,96,.3); }
+.badge-high       { background: rgba(224,92,106,.18);  color: #e05c6a; border: 1px solid rgba(224,92,106,.3); }
 
-/* Buttons */
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -109,20 +117,22 @@ body {
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.1s;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
   text-decoration: none;
+  font-family: inherit;
 }
-
-.btn:hover { opacity: 0.88; }
+.btn:hover  { opacity: 0.88; }
 .btn:active { transform: scale(0.98); }
 
-.btn-primary   { background: var(--color-primary); color: white; }
-.btn-success   { background: var(--color-success); color: white; }
-.btn-danger    { background: var(--color-danger); color: white; }
-.btn-secondary { background: #e2e8f0; color: var(--color-text); }
+.btn-primary   { background: linear-gradient(135deg, #3a8fbf, #4facde); color: #fff; box-shadow: 0 2px 10px rgba(79,172,222,.3); }
+.btn-primary:hover { box-shadow: 0 4px 18px rgba(79,172,222,.45); opacity: 1; }
+.btn-success   { background: linear-gradient(135deg, #28a88a, #34d0a8); color: #fff; }
+.btn-danger    { background: linear-gradient(135deg, #c0404e, #e05c6a); color: #fff; }
+.btn-secondary { background: rgba(255,255,255,.08); color: var(--color-text); border: 1px solid var(--color-border); }
+.btn-secondary:hover { background: rgba(255,255,255,.13); opacity: 1; }
 .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
 
-/* Form controls */
+/* ── Form controls ───────────────────────────────────────────────────────── */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -143,27 +153,31 @@ body {
   font-size: 0.875rem;
   font-family: inherit;
   color: var(--color-text);
-  background: white;
-  transition: border-color 0.15s;
+  background: rgba(255,255,255,.06);
+  transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
 }
+
+.form-control::placeholder { color: var(--color-text-secondary); opacity: .6; }
+
+/* Colour picker / date native UI needs explicit scheme */
+.form-control { color-scheme: dark; }
 
 .form-control:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px rgba(79,172,222,.18);
+  background: rgba(255,255,255,.08);
 }
 
-.form-control.error {
-  border-color: var(--color-danger);
-}
+.form-control.error { border-color: var(--color-danger); }
 
-.error-text {
-  color: var(--color-danger);
-  font-size: 0.8rem;
-}
+/* Dropdown options need a dark background so they're readable */
+.form-control option { background: #0f2237; color: var(--color-text); }
 
-/* Page header */
+.error-text { color: var(--color-danger); font-size: 0.8rem; }
+
+/* ── Page header ─────────────────────────────────────────────────────────── */
 .page-header {
   display: flex;
   align-items: center;
@@ -179,24 +193,21 @@ body {
   color: var(--color-text);
 }
 
-/* Loading / empty state */
+/* ── Loading / empty states ──────────────────────────────────────────────── */
 .loading-state, .empty-state {
   text-align: center;
   padding: 48px 24px;
   color: var(--color-text-secondary);
 }
+.loading-state p, .empty-state p { font-size: 1rem; }
 
-.loading-state p, .empty-state p {
-  font-size: 1rem;
-}
-
-/* Alert messages */
+/* ── Alerts ──────────────────────────────────────────────────────────────── */
 .alert {
   padding: 12px 16px;
   border-radius: var(--radius-md);
   margin-bottom: var(--space-md);
   font-size: 0.875rem;
+  backdrop-filter: blur(8px);
 }
-
-.alert-error   { background: #fee2e2; color: #991b1b; border-left: 4px solid var(--color-danger); }
-.alert-success { background: #d1fae5; color: #065f46; border-left: 4px solid var(--color-success); }
+.alert-error   { background: rgba(224,92,106,.12); color: #f0a0a8; border-left: 4px solid var(--color-danger); }
+.alert-success { background: rgba(52,208,168,.12); color: #34d0a8; border-left: 4px solid var(--color-success); }

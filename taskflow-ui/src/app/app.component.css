@@ -1,6 +1,5 @@
-/* app.component.css — Shell Layout Styles */
+/* app.component.css — Shell Layout */
 
-/* ── Reset & Base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -11,47 +10,56 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f0f2f5;
+  background: transparent; /* sky gradient lives on <html> in styles.css */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* ── Navigation Bar ───────────────────────────────────────────────────────── */
 .navbar {
-  background: #1a1a2e;
-  color: white;
+  background: rgba(13,27,46,.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #dce9f5;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
   height: 60px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(79,172,222,.15);
+  box-shadow: 0 2px 20px rgba(0,0,0,.35);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
+/* ── Brand ────────────────────────────────────────────────────────────────── */
 .nav-brand {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .brand-icon {
-  background: #4f46e5;
+  background: linear-gradient(135deg, #3a8fbf, #4facde);
   color: white;
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 0.9rem;
+  box-shadow: 0 2px 10px rgba(79,172,222,.4);
 }
 
+/* ── Nav links ────────────────────────────────────────────────────────────── */
 .nav-links {
   display: flex;
   list-style: none;
@@ -59,25 +67,27 @@
 }
 
 .nav-links a {
-  color: #a0aec0;
+  color: #6b8fa8;
   text-decoration: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: background 0.2s, color 0.2s;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s;
 }
 
 .nav-links a:hover {
-  background: rgba(255,255,255,0.08);
-  color: white;
+  background: rgba(79,172,222,.1);
+  color: #dce9f5;
 }
 
 .nav-links a.active {
-  background: #4f46e5;
-  color: white;
+  background: rgba(79,172,222,.18);
+  color: #a8d0e8;
+  border: 1px solid rgba(79,172,222,.25);
 }
 
-/* ── Mobile Menu Toggle ───────────────────────────────────────────────────── */
+/* ── Hamburger ────────────────────────────────────────────────────────────── */
 .menu-toggle {
   display: none;
   flex-direction: column;
@@ -92,7 +102,7 @@
   display: block;
   width: 22px;
   height: 2px;
-  background: #a0aec0;
+  background: #6b8fa8;
   border-radius: 2px;
 }
 
@@ -105,7 +115,7 @@
   margin: 0 auto;
 }
 
-/* ── API Status Banners ───────────────────────────────────────────────────── */
+/* ── API Banners ──────────────────────────────────────────────────────────── */
 .api-banner {
   padding: 10px 24px;
   font-size: 0.85rem;
@@ -116,15 +126,15 @@
 }
 
 .api-banner-connecting {
-  background: #fef3c7;
-  color: #92400e;
-  border-bottom: 1px solid #fcd34d;
+  background: rgba(240,192,96,.1);
+  color: #f0c060;
+  border-bottom: 1px solid rgba(240,192,96,.2);
 }
 
 .api-banner-error {
-  background: #fee2e2;
-  color: #991b1b;
-  border-bottom: 1px solid #fca5a5;
+  background: rgba(224,92,106,.1);
+  color: #e8909a;
+  border-bottom: 1px solid rgba(224,92,106,.2);
 }
 
 .btn-retry {
@@ -135,15 +145,13 @@
   font-size: 0.8rem;
   cursor: pointer;
   color: inherit;
+  font-family: inherit;
 }
-
 .btn-retry:hover { opacity: 0.7; }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .menu-toggle {
-    display: flex;
-  }
+  .menu-toggle { display: flex; }
 
   .nav-links {
     display: none;
@@ -152,16 +160,13 @@
     top: 60px;
     left: 0;
     right: 0;
-    background: #1a1a2e;
-    padding: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    background: rgba(13,27,46,.95);
+    backdrop-filter: blur(16px);
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(79,172,222,.15);
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
   }
 
-  .nav-links.open {
-    display: flex;
-  }
-
-  .main-content {
-    padding: 16px;
-  }
+  .nav-links.open { display: flex; }
+  .main-content   { padding: 16px; }
 }

@@ -21,6 +21,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TaskListComponent } from './components/task-list/task-list.component';
 import { TaskFormComponent } from './components/task-form/task-form.component';
 import { UserListComponent } from './components/user-list/user-list.component';
+import { AboutComponent } from './components/about/about.component';
 
 /**
  * Route definitions — maps URL paths to Angular components.
@@ -44,6 +45,9 @@ const routes: Routes = [
 
   // User management — list and CRUD for users
   { path: 'users', component: UserListComponent },
+
+  // About — architecture overview and interview guide
+  { path: 'about', component: AboutComponent },
 
   // Wildcard route — redirects unknown URLs to dashboard
   { path: '**', redirectTo: '/dashboard' }

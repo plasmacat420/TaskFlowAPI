@@ -27,6 +27,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TaskListComponent } from './components/task-list/task-list.component';
 import { TaskFormComponent } from './components/task-form/task-form.component';
 import { UserListComponent } from './components/user-list/user-list.component';
+import { AboutComponent } from './components/about/about.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { UserListComponent } from './components/user-list/user-list.component';
     DashboardComponent,
     TaskListComponent,
     TaskFormComponent,
-    UserListComponent
+    UserListComponent,
+    AboutComponent
   ],
   imports: [
     // BrowserModule — provides browser-specific services (DOM rendering, sanitization)

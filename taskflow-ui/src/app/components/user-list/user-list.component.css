@@ -15,12 +15,10 @@
   gap: 10px;
   margin-top: 8px;
   padding-top: 16px;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid rgba(79,172,222,.1);
 }
 
 /* ── Table ────────────────────────────────────────────────────────────────── */
-/* overflow-x: auto on the card lets the table scroll horizontally on small screens
-   instead of overflowing and breaking the page layout. */
 .card { overflow-x: auto; }
 
 .user-table {
@@ -32,23 +30,24 @@
 .user-table th {
   text-align: left;
   padding: 10px 12px;
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: 1px solid rgba(79,172,222,.15);
   font-weight: 600;
   color: var(--color-text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .user-table td {
   padding: 12px 12px;
-  border-bottom: 1px solid #f0f4f8;
+  border-bottom: 1px solid rgba(79,172,222,.07);
   vertical-align: middle;
+  color: var(--color-text);
 }
 
 .user-table tr:last-child td { border-bottom: none; }
 
-.user-table tr:hover td { background: #f8fafc; }
+.user-table tr:hover td { background: rgba(79,172,222,.06); }
 
 .user-cell {
   display: flex;
@@ -60,7 +59,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: var(--color-primary);
+  background: linear-gradient(135deg, #3a8fbf, #4facde);
   color: white;
   display: flex;
   align-items: center;
@@ -68,16 +67,13 @@
   font-weight: 700;
   font-size: 0.8rem;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(79,172,222,.3);
 }
 
 .email-cell { color: var(--color-text-secondary); }
 .date-cell  { color: var(--color-text-secondary); font-size: 0.8rem; }
 
-.task-count {
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-
+.task-count           { font-weight: 600; color: var(--color-text-secondary); }
 .task-count.has-tasks { color: var(--color-primary); }
 
 .action-btns { display: flex; gap: 6px; }
@@ -93,10 +89,9 @@
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-  .form-row { grid-template-columns: 1fr; }
+  .form-row      { grid-template-columns: 1fr; }
   .inline-fields { grid-template-columns: 1fr; }
 
-  /* Hide date column on mobile */
   .user-table th:nth-child(4),
   .user-table td:nth-child(4) { display: none; }
 }

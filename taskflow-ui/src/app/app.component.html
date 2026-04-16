@@ -13,10 +13,10 @@
 
   <!-- ── Navigation Bar ──────────────────────────────────────────────────── -->
   <nav class="navbar">
-    <div class="nav-brand">
+    <a routerLink="/dashboard" class="nav-brand">
       <span class="brand-icon">✓</span>
       <span class="brand-name">TaskFlow</span>
-    </div>
+    </a>
 
     <!-- Hamburger button for mobile -->
     <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle navigation">
@@ -43,6 +43,11 @@
       <li>
         <a routerLink="/users" routerLinkActive="active" (click)="closeMenu()">
           Users
+        </a>
+      </li>
+      <li>
+        <a routerLink="/about" routerLinkActive="active" (click)="closeMenu()">
+          About
         </a>
       </li>
     </ul>
