@@ -1,0 +1,159 @@
+<!--
+  dashboard.component.html — Dashboard Template
+
+  Angular template syntax used here:
+  *ngIf    — conditional rendering (structural directive, creates/destroys DOM)
+  *ngFor   — list rendering (structural directive)
+  {{ }}    — interpolation (one-way data binding, expression → text)
+  [class]  — class binding (sets CSS class based on expression)
+-->
+
+<div class="dashboard">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <span class="date-label">{{ today | date:'EEEE, MMMM d, yyyy' }}</span>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading && !error" class="loading-state">
+    <p>Loading dashboard...</p>
+  </div>
+
+  <!-- Dashboard content — only shown when loaded -->
+  <div *ngIf="!loading && !error">
+
+    <!-- ── KPI Summary Cards ──────────────────────────────────────────────── -->
+    <div class="kpi-grid">
+
+      <div class="kpi-card kpi-total">
+        <div class="kpi-icon">📋</div>
+        <div class="kpi-info">
+          <div class="kpi-number">{{ totalTasks }}</div>
+          <div class="kpi-label">Total Tasks</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-pending">
+        <div class="kpi-icon">⏳</div>
+        <div class="kpi-info">
+          <div class="kpi-number">{{ pendingTasks }}</div>
+          <div class="kpi-label">Pending</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-inprogress">
+        <div class="kpi-icon">🔄</div>
+        <div class="kpi-info">
+          <div class="kpi-number">{{ inProgressTasks }}</div>
+          <div class="kpi-label">In Progress</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-done">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-info">
+          <div class="kpi-number">{{ doneTasks }}</div>
+          <div class="kpi-label">Done</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-high">
+        <div class="kpi-icon">🔴</div>
+        <div class="kpi-info">
+          <div class="kpi-number">{{ highPriorityOpen }}</div>
+          <div class="kpi-label">High Priority Open</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-users">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-info">
+          <div class="kpi-number">{{ users.length }}</div>
+          <div class="kpi-label">Team Members</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Completion Progress Bar ───────────────────────────────────────── -->
+    <div class="card progress-card">
+      <div class="progress-header">
+        <span class="progress-label">Overall Completion</span>
+        <span class="progress-pct">{{ completionRate }}%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="completionRate"></div>
+      </div>
+      <p class="progress-sub">{{ doneTasks }} of {{ totalTasks }} tasks completed</p>
+    </div>
+
+    <!-- ── Bottom Grid: Recent Tasks + Team ──────────────────────────────── -->
+    <div class="bottom-grid">
+
+      <!-- Recent tasks -->
+      <div class="card">
+        <h2 class="section-title">Recent Tasks</h2>
+
+        <div *ngIf="recentTasks.length === 0" class="empty-state">
+          <p>No tasks yet. <a routerLink="/tasks/new">Create one!</a></p>
+        </div>
+
+        <div class="recent-task-list">
+          <div *ngFor="let task of recentTasks" class="recent-task-item">
+            <div class="recent-task-info">
+              <span class="recent-task-title">{{ task.title }}</span>
+              <span class="recent-task-meta">
+                {{ task.assignedUserName || 'Unassigned' }}
+              </span>
+            </div>
+            <div class="recent-task-badges">
+              <span class="badge" [ngClass]="getStatusClass(task.status)">
+                {{ task.status }}
+              </span>
+              <span class="badge" [ngClass]="getPriorityClass(task.priority)">
+                {{ task.priority }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <a routerLink="/tasks" class="btn btn-secondary btn-sm">View All Tasks</a>
+        </div>
+      </div>
+
+      <!-- Team overview -->
+      <div class="card">
+        <h2 class="section-title">Team Overview</h2>
+
+        <div *ngIf="users.length === 0" class="empty-state">
+          <p>No users yet. <a routerLink="/users">Add team members!</a></p>
+        </div>
+
+        <div class="team-list">
+          <div *ngFor="let user of users" class="team-item">
+            <div class="user-avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
+            <div class="user-info">
+              <div class="user-name">{{ user.name }}</div>
+              <div class="user-email">{{ user.email }}</div>
+            </div>
+            <div class="user-task-count">
+              <span class="task-count-badge">{{ user.taskCount }}</span>
+              <span class="task-count-label">tasks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <a routerLink="/users" class="btn btn-secondary btn-sm">Manage Team</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

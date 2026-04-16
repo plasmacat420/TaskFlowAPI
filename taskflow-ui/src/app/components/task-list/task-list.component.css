@@ -1,0 +1,122 @@
+/* task-list.component.css */
+
+/* ── Filters ──────────────────────────────────────────────────────────────── */
+.filters-card { margin-bottom: 20px; }
+
+.filters-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-input { flex: 1; min-width: 180px; }
+.filter-select { width: 150px; }
+
+.result-count {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+/* ── Task Grid ────────────────────────────────────────────────────────────── */
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.task-card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.task-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.task-card.task-done {
+  opacity: 0.7;
+  border-top-color: var(--color-done);
+}
+
+.task-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.task-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.task-badges {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.task-description {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.meta-item {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
+
+.meta-item.overdue { color: var(--color-danger); font-weight: 600; }
+.meta-item.created { margin-left: auto; font-size: 0.74rem; }
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: inherit;
+  text-decoration: underline;
+  padding: 0;
+}
+
+@media (max-width: 640px) {
+  .task-grid { grid-template-columns: 1fr; }
+  .filter-select { width: 100%; }
+  .search-input { width: 100%; }
+}

@@ -1,0 +1,124 @@
+<!--
+  task-list.component.html — Task List Template with Filters
+
+  Key Angular directives used:
+  [(ngModel)]  — Two-way binding for filter inputs (template-driven)
+  (ngModelChange) — Event fired when ngModel value changes; we call applyFilters()
+  *ngFor       — Iterate over filteredTasks to render each row
+  [ngClass]    — Conditionally apply CSS classes (status/priority badges)
+-->
+
+<div class="task-list-page">
+
+  <!-- ── Page Header ─────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <h1 class="page-title">Tasks</h1>
+    <a routerLink="/tasks/new" class="btn btn-primary">+ New Task</a>
+  </div>
+
+  <!-- ── Messages ────────────────────────────────────────────────────────── -->
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <!-- ── Filters Bar ─────────────────────────────────────────────────────── -->
+  <div class="card filters-card">
+    <div class="filters-row">
+
+      <!-- Text search -->
+      <input
+        type="text"
+        class="form-control search-input"
+        placeholder="Search tasks..."
+        [(ngModel)]="searchText"
+        (ngModelChange)="applyFilters()"
+      />
+
+      <!-- Status filter -->
+      <select
+        class="form-control filter-select"
+        [(ngModel)]="filterStatus"
+        (ngModelChange)="applyFilters()"
+      >
+        <option value="">All Statuses</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+
+      <!-- Priority filter -->
+      <select
+        class="form-control filter-select"
+        [(ngModel)]="filterPriority"
+        (ngModelChange)="applyFilters()"
+      >
+        <option value="">All Priorities</option>
+        <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+      </select>
+
+      <!-- Clear filters -->
+      <button
+        class="btn btn-secondary"
+        (click)="clearFilters()"
+        *ngIf="filterStatus || filterPriority || searchText"
+      >
+        Clear
+      </button>
+
+    </div>
+
+    <!-- Result count -->
+    <p class="result-count">
+      Showing {{ filteredTasks.length }} of {{ allTasks.length }} tasks
+    </p>
+  </div>
+
+  <!-- ── Loading ─────────────────────────────────────────────────────────── -->
+  <div *ngIf="loading" class="loading-state">
+    <p>Loading tasks...</p>
+  </div>
+
+  <!-- ── Empty state ─────────────────────────────────────────────────────── -->
+  <div *ngIf="!loading && filteredTasks.length === 0 && !error" class="empty-state card">
+    <p *ngIf="allTasks.length === 0">No tasks yet. <a routerLink="/tasks/new">Create your first task!</a></p>
+    <p *ngIf="allTasks.length > 0">No tasks match your filters. <button class="btn-link" (click)="clearFilters()">Clear filters</button></p>
+  </div>
+
+  <!-- ── Task Cards ───────────────────────────────────────────────────────── -->
+  <div *ngIf="!loading && filteredTasks.length > 0" class="task-grid">
+
+    <div *ngFor="let task of filteredTasks" class="task-card" [class.task-done]="task.status === 'Done'">
+
+      <!-- Card header: title + badges -->
+      <div class="task-card-header">
+        <h3 class="task-title">{{ task.title }}</h3>
+        <div class="task-badges">
+          <span class="badge" [ngClass]="getPriorityClass(task.priority)">{{ task.priority }}</span>
+          <span class="badge" [ngClass]="getStatusClass(task.status)">{{ task.status }}</span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
+
+      <!-- Metadata -->
+      <div class="task-meta">
+        <span *ngIf="task.assignedUserName" class="meta-item">
+          👤 {{ task.assignedUserName }}
+        </span>
+        <span *ngIf="task.dueDate" class="meta-item" [class.overdue]="isOverdue(task)">
+          📅 {{ formatDate(task.dueDate) }}
+        </span>
+        <span class="meta-item created">
+          Created {{ formatDate(task.createdAt) }}
+        </span>
+      </div>
+
+      <!-- Actions -->
+      <div class="task-actions">
+        <button class="btn btn-secondary btn-sm" (click)="editTask(task)">Edit</button>
+        <button class="btn btn-danger btn-sm" (click)="deleteTask(task)">Delete</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

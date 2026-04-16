@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(render --version)",
+      "Bash(gh auth *)",
+      "Bash(gh api *)"
+    ]
+  }
+}

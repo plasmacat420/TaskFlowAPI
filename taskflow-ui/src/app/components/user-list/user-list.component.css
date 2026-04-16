@@ -1,0 +1,98 @@
+/* user-list.component.css */
+
+.create-card { margin-bottom: 20px; }
+
+.required { color: var(--color-danger); }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.user-table th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--color-border);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid #f0f4f8;
+  vertical-align: middle;
+}
+
+.user-table tr:last-child td { border-bottom: none; }
+
+.user-table tr:hover td { background: #f8fafc; }
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.email-cell { color: var(--color-text-secondary); }
+.date-cell  { color: var(--color-text-secondary); font-size: 0.8rem; }
+
+.task-count {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.task-count.has-tasks { color: var(--color-primary); }
+
+.action-btns { display: flex; gap: 6px; }
+
+/* ── Inline edit ──────────────────────────────────────────────────────────── */
+.inline-edit-form { padding: 4px 0; }
+
+.inline-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .form-row { grid-template-columns: 1fr; }
+  .inline-fields { grid-template-columns: 1fr; }
+
+  /* Hide date column on mobile */
+  .user-table th:nth-child(4),
+  .user-table td:nth-child(4) { display: none; }
+}

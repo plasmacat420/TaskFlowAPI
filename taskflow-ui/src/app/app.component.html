@@ -1,0 +1,62 @@
+<!--
+  app.component.html — Root Application Shell Template
+
+  WHY this structure:
+  The navigation bar is rendered once and persists across all route changes.
+  <router-outlet> is the dynamic slot where Angular renders the current route's component.
+  This avoids re-rendering the nav on every navigation (more efficient, better UX).
+
+  routerLink — Angular directive that navigates without a full page reload.
+  routerLinkActive — adds the "active" CSS class when the route matches.
+-->
+<div class="app-shell">
+
+  <!-- ── Navigation Bar ──────────────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">✓</span>
+      <span class="brand-name">TaskFlow</span>
+    </div>
+
+    <!-- Hamburger button for mobile -->
+    <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Nav links — hidden on mobile until menu is toggled -->
+    <ul class="nav-links" [class.open]="menuOpen">
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()">
+          Dashboard
+        </a>
+      </li>
+      <li>
+        <a routerLink="/tasks" routerLinkActive="active" (click)="closeMenu()">
+          Tasks
+        </a>
+      </li>
+      <li>
+        <a routerLink="/tasks/new" routerLinkActive="active" (click)="closeMenu()">
+          + New Task
+        </a>
+      </li>
+      <li>
+        <a routerLink="/users" routerLinkActive="active" (click)="closeMenu()">
+          Users
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ── Main Content Area ────────────────────────────────────────────────── -->
+  <main class="main-content">
+    <!--
+      router-outlet is the placeholder where Angular renders the routed component.
+      When the URL changes to /tasks, TaskListComponent renders here.
+      When URL changes to /dashboard, DashboardComponent renders here.
+      The nav bar above stays the same — only this area changes.
+    -->
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

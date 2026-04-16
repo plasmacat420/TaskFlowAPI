@@ -1,0 +1,55 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# render.yaml — Render Infrastructure as Code (IaC) Configuration
+#
+# WHY render.yaml:
+# This file defines the entire TaskFlow infrastructure as code.
+# Instead of clicking through Render's dashboard, everything is version-controlled here.
+# This is the "Infrastructure as Code" (IaC) principle — your infrastructure is
+# reproducible, reviewable, and deployable by anyone with access to this file.
+#
+# Render reads this file on deployment to provision:
+# 1. A PostgreSQL database
+# 2. A web service running the Docker container
+#
+# Deploy steps:
+# 1. Push this repo to GitHub
+# 2. Go to render.com → New → Blueprint
+# 3. Connect your GitHub repo — Render auto-detects this file
+# 4. Click Deploy — Render provisions everything automatically
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  # ── Web Service (Docker-based) ─────────────────────────────────────────────
+  - type: web
+    name: taskflow-api
+    runtime: docker
+    # Render builds the Dockerfile at the root of the repo
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
+
+    # Free tier — upgrade to paid for production SLAs
+    plan: free
+
+    # Health check — Render uses this to verify the service started successfully
+    # The /swagger endpoint returns 200 in Development; for Production use /api/tasks
+    healthCheckPath: /api/tasks
+
+    # Environment variables — Render injects these into the container at runtime
+    envVars:
+      # ASPNETCORE_ENVIRONMENT: controls which appsettings.{env}.json is loaded
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+
+      # DATABASE_URL: injected automatically by Render from the linked database below
+      # The `fromDatabase` reference connects this service to the DB service defined below
+      - key: DATABASE_URL
+        fromDatabase:
+          name: taskflow-db
+          property: connectionString
+
+# ── PostgreSQL Database ────────────────────────────────────────────────────────
+databases:
+  - name: taskflow-db
+    databaseName: taskflow
+    # Free tier PostgreSQL — 90-day retention on free plan, upgrade for production
+    plan: free

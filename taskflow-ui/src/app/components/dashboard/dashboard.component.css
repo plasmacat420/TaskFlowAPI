@@ -1,0 +1,187 @@
+/* dashboard.component.css */
+
+.dashboard { }
+
+.date-label {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ── KPI Cards ────────────────────────────────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid transparent;
+}
+
+.kpi-total      { border-left-color: #6366f1; }
+.kpi-pending    { border-left-color: #f59e0b; }
+.kpi-inprogress { border-left-color: #3b82f6; }
+.kpi-done       { border-left-color: #10b981; }
+.kpi-high       { border-left-color: #ef4444; }
+.kpi-users      { border-left-color: #8b5cf6; }
+
+.kpi-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.kpi-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* ── Progress Card ────────────────────────────────────────────────────────── */
+.progress-card {
+  margin-bottom: 24px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.progress-label { font-weight: 600; font-size: 0.9rem; }
+.progress-pct   { font-weight: 700; color: var(--color-primary); font-size: 1rem; }
+
+.progress-bar-bg {
+  background: #e2e8f0;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #818cf8);
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.progress-sub {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+/* ── Bottom Grid ──────────────────────────────────────────────────────────── */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--color-text);
+}
+
+/* Recent tasks */
+.recent-task-list { display: flex; flex-direction: column; gap: 10px; }
+
+.recent-task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.recent-task-title {
+  font-weight: 500;
+  font-size: 0.875rem;
+  display: block;
+}
+
+.recent-task-meta {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
+
+.recent-task-badges { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* Team list */
+.team-list { display: flex; flex-direction: column; gap: 10px; }
+
+.team-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.team-item:last-child { border-bottom: none; }
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.user-name { font-weight: 500; font-size: 0.875rem; }
+.user-email { font-size: 0.78rem; color: var(--color-text-secondary); }
+.user-info { flex: 1; min-width: 0; }
+
+.task-count-badge {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.task-count-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-left: 2px;
+}
+
+.card-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .bottom-grid { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+}
