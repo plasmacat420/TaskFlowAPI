@@ -7,7 +7,9 @@ REPO_NAME="TaskFlowAPI"
 
 echo "Building TaskFlow UI for GitHub Pages (base-href: /${REPO_NAME}/)..."
 
-npx ng build \
+# MSYS_NO_PATHCONV=1 prevents Git Bash on Windows from converting /TaskFlowAPI/
+# into a Windows filesystem path (C:/Program Files/Git/TaskFlowAPI/)
+MSYS_NO_PATHCONV=1 npx ng build \
   --configuration production \
   --base-href "/${REPO_NAME}/"
 
