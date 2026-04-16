@@ -150,6 +150,14 @@ public class TaskService : ITaskService
         // WHY: this is a full PUT from the Angular form which always sends every field.
         //      Using ??(null-coalesce) for these fields would prevent the user from ever
         //      unassigning a task or removing a due date, because null would be ignored.
+        // IMPORTANT: clear the navigation property BEFORE setting the FK.
+        // GetByIdAsync eagerly loads AssignedUser via .Include(). When EF Core's Update()
+        // attaches the detached entity back to the change tracker, it reconciles the FK
+        // from the navigation property — so even if we set AssignedUserId = null, the
+        // non-null AssignedUser object causes EF Core to reset AssignedUserId to Sarah's ID.
+        // Nulling the nav prop removes the conflict: the FK is then the authoritative value.
+        task.AssignedUser = null;
+
         if (dto.Title is not null) task.Title = dto.Title;
         task.Description = dto.Description;          // null = "clear the description"
         if (dto.Status.HasValue)   task.Status   = dto.Status.Value;
