@@ -1,200 +1,231 @@
 /* dashboard.component.css */
 
-.dashboard { }
+.dashboard {}
 
 .date-label {
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.82rem;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  letter-spacing: .02em;
 }
 
-/* ── KPI Cards ────────────────────────────────────────────────────────────── */
+/* ── KPI Grid ───────────────────────────────────────────────────── */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
   margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
 }
 
 .kpi-card {
-  background: rgba(255,255,255,.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--surface);
+  padding: 22px 24px 20px;
   display: flex;
-  align-items: center;
-  gap: 14px;
-  box-shadow: 0 2px 12px rgba(0,0,0,.2);
-  border: 1px solid rgba(79,172,222,.12);
-  border-left: 4px solid transparent;
-  transition: transform .18s, box-shadow .18s, border-color .18s;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 3px solid transparent;
+  transition: background .15s;
+  position: relative;
 }
 
-.kpi-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0,0,0,.3);
-  border-left-width: 4px;
-}
+.kpi-card:hover { background: rgba(43,127,255,.04); }
 
-.kpi-total      { border-left-color: #4facde; }
-.kpi-pending    { border-left-color: #f0c060; }
-.kpi-inprogress { border-left-color: #4facde; }
-.kpi-done       { border-left-color: #34d0a8; }
-.kpi-high       { border-left-color: #e05c6a; }
-.kpi-users      { border-left-color: #7ab8d8; }
+.kpi-total      { border-left-color: var(--text-3); }
+.kpi-pending    { border-left-color: var(--pending); }
+.kpi-inprogress { border-left-color: var(--inprogress); }
+.kpi-done       { border-left-color: var(--done); }
+.kpi-high       { border-left-color: var(--high); }
+.kpi-users      { border-left-color: var(--accent); }
 
-.kpi-icon {
-  font-size: 1.6rem;
-  line-height: 1;
-}
+.kpi-icon { display: none; }
 
 .kpi-number {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 2.6rem;
+  font-weight: 600;
+  color: var(--text);
   line-height: 1;
+  letter-spacing: -.04em;
+  font-variant-numeric: tabular-nums;
 }
 
 .kpi-label {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
   margin-top: 2px;
 }
 
-/* ── Progress Card ────────────────────────────────────────────────────────── */
-.progress-card { margin-bottom: 24px; }
+/* ── Progress Card ──────────────────────────────────────────────── */
+.progress-card {
+  margin-bottom: 24px;
+  padding: 22px 28px;
+}
 
 .progress-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  align-items: baseline;
+  margin-bottom: 12px;
 }
 
-.progress-label { font-weight: 600; font-size: 0.9rem; color: var(--color-text); }
-.progress-pct   { font-weight: 700; color: var(--color-primary); font-size: 1rem; }
+.progress-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.progress-pct {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -.04em;
+}
 
 .progress-bar-bg {
-  background: rgba(79,172,222,.12);
-  height: 10px;
+  background: var(--bg-2);
+  height: 6px;
   border-radius: 999px;
   overflow: hidden;
-  border: 1px solid rgba(79,172,222,.15);
+  border: 1px solid var(--border);
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3a8fbf, #4facde, #a8d0e8);
+  background: linear-gradient(90deg, var(--accent), var(--teal));
   border-radius: 999px;
-  transition: width 0.6s ease;
-  box-shadow: 0 0 10px rgba(79,172,222,.5);
+  transition: width 0.8s cubic-bezier(.4,0,.2,1);
 }
 
 .progress-sub {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: var(--text-3);
 }
 
-/* ── Bottom Grid ──────────────────────────────────────────────────────────── */
+/* ── Bottom Grid ────────────────────────────────────────────────── */
 .bottom-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 20px;
 }
 
 .section-title {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 16px;
-  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 18px;
+  color: var(--text);
+  letter-spacing: -.01em;
 }
 
 /* Recent tasks */
-.recent-task-list { display: flex; flex-direction: column; gap: 8px; }
+.recent-task-list { display: flex; flex-direction: column; }
 
 .recent-task-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  background: rgba(79,172,222,.06);
-  border: 1px solid rgba(79,172,222,.1);
-  border-radius: 8px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
   gap: 12px;
-  transition: background .18s;
 }
-.recent-task-item:hover { background: rgba(79,172,222,.1); }
+
+.recent-task-item:last-child { border-bottom: none; }
 
 .recent-task-title {
   font-weight: 500;
   font-size: 0.875rem;
   display: block;
-  color: var(--color-text);
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
 }
 
 .recent-task-meta {
-  font-size: 0.78rem;
-  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 1px;
 }
 
-.recent-task-badges { display: flex; gap: 6px; flex-shrink: 0; }
+.recent-task-badges { display: flex; gap: 5px; flex-shrink: 0; }
 
 /* Team list */
-.team-list { display: flex; flex-direction: column; gap: 8px; }
+.team-list { display: flex; flex-direction: column; }
 
 .team-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(79,172,222,.08);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
 }
 .team-item:last-child { border-bottom: none; }
 
 .user-avatar {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3a8fbf, #4facde);
-  color: white;
+  background: var(--accent-pale);
+  border: 1.5px solid rgba(43,127,255,.25);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(79,172,222,.3);
 }
 
-.user-name  { font-weight: 500; font-size: 0.875rem; color: var(--color-text); }
-.user-email { font-size: 0.78rem; color: var(--color-text-secondary); }
+.user-name  { font-weight: 600; font-size: 0.875rem; color: var(--text); }
+.user-email { font-size: 0.75rem; color: var(--text-3); }
 .user-info  { flex: 1; min-width: 0; }
 
 .task-count-badge {
+  font-family: var(--font-mono);
   font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-primary);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 .task-count-label {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  margin-left: 2px;
+  font-size: 0.72rem;
+  color: var(--text-3);
+  margin-left: 3px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
 }
 
 .card-footer {
   margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(79,172,222,.1);
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
 }
 
-/* ── Responsive ───────────────────────────────────────────────────────────── */
-@media (max-width: 768px) {
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 860px) {
   .bottom-grid { grid-template-columns: 1fr; }
-  .kpi-grid    { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-number { font-size: 2rem; }
+}
+
+@media (max-width: 400px) {
   .kpi-grid { grid-template-columns: 1fr 1fr; }
 }

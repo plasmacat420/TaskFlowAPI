@@ -2,7 +2,7 @@
 
 .create-card { margin-bottom: 20px; }
 
-.required { color: var(--color-danger); }
+.required { color: var(--high); }
 
 .form-row {
   display: grid;
@@ -13,12 +13,12 @@
 .form-actions {
   display: flex;
   gap: 10px;
-  margin-top: 8px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(79,172,222,.1);
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
 }
 
-/* ── Table ────────────────────────────────────────────────────────────────── */
+/* ── Table ──────────────────────────────────────────────────────── */
 .card { overflow-x: auto; }
 
 .user-table {
@@ -29,25 +29,26 @@
 
 .user-table th {
   text-align: left;
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(79,172,222,.15);
+  padding: 10px 14px;
+  border-bottom: 1.5px solid var(--border);
+  font-size: 0.72rem;
   font-weight: 600;
-  color: var(--color-text-secondary);
-  font-size: 0.78rem;
+  color: var(--text-3);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: .06em;
+  white-space: nowrap;
 }
 
 .user-table td {
-  padding: 12px 12px;
-  border-bottom: 1px solid rgba(79,172,222,.07);
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
   vertical-align: middle;
-  color: var(--color-text);
 }
 
-.user-table tr:last-child td { border-bottom: none; }
+.user-table tbody tr:last-child td { border-bottom: none; }
 
-.user-table tr:hover td { background: rgba(79,172,222,.06); }
+.user-table tbody tr:hover td { background: var(--bg); }
 
 .user-cell {
   display: flex;
@@ -59,27 +60,28 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3a8fbf, #4facde);
-  color: white;
+  background: var(--accent-pale);
+  border: 1.5px solid rgba(43,127,255,.22);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  font-family: var(--font-body);
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(79,172,222,.3);
 }
 
-.email-cell { color: var(--color-text-secondary); }
-.date-cell  { color: var(--color-text-secondary); font-size: 0.8rem; }
+.email-cell { color: var(--text-2); font-size: 0.82rem; }
+.date-cell  { color: var(--text-3); font-size: 0.8rem; font-family: var(--font-mono); }
 
-.task-count           { font-weight: 600; color: var(--color-text-secondary); }
-.task-count.has-tasks { color: var(--color-primary); }
+.task-count           { font-family: var(--font-mono); font-weight: 600; color: var(--text-3); }
+.task-count.has-tasks { color: var(--accent); }
 
 .action-btns { display: flex; gap: 6px; }
 
-/* ── Inline edit ──────────────────────────────────────────────────────────── */
-.inline-edit-form { padding: 4px 0; }
+/* Inline edit */
+.inline-edit-form { padding: 2px 0; }
 
 .inline-fields {
   display: grid;
@@ -87,11 +89,9 @@
   gap: 10px;
 }
 
-/* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .form-row      { grid-template-columns: 1fr; }
   .inline-fields { grid-template-columns: 1fr; }
-
   .user-table th:nth-child(4),
   .user-table td:nth-child(4) { display: none; }
 }
